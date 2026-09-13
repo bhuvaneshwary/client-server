@@ -1,0 +1,10 @@
+# Executables
+server
+client
+a.out
+
+# Object files
+*.o
+
+# macOS
+.DS_Store
