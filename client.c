@@ -5,10 +5,19 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 
+struct Student
+{
+    int roll_no;
+    char name[20];
+    float marks;
+};
+
 int main()
 {
     int sockfd;
     struct sockaddr_in server_addr;
+
+    printf("Creating socket...\n");
 
     sockfd = socket(AF_INET,SOCK_STREAM,0);
     if(sockfd == - 1)
@@ -25,6 +34,8 @@ int main()
     server_addr.sin_port = htons(8080);
     inet_pton(AF_INET, "127.0.0.1", &server_addr.sin_addr);
 
+    printf("Connecting to server...\n");
+
     int c = connect(sockfd, (struct sockaddr *)&server_addr, sizeof(server_addr));
     if(c == - 1)
     {
@@ -35,9 +46,18 @@ int main()
     {
         printf("successfully connected\n");
     }
-    char msg[] = "{\"text\":\"hi\"}";
 
-    int s = send(sockfd, msg, strlen(msg), 0);
+    // SEND STUDENT STRUCTURE
+
+    struct Student student;
+
+    student.roll_no = 101;
+    strcpy(student.name, "Bhuvan");
+    student.marks = 85.5;
+
+    printf("Sending student data...\n");
+
+    int s = send(sockfd, &student, sizeof(student), 0);
     
     if(s == -1)
     {
@@ -45,26 +65,10 @@ int main()
     }
     else
     {
-        printf("data sent successfully\n");
+        printf("student data sent successfully\n");
     }
-    
-    char buffer[1024];
-    
-    int rec = recv(sockfd, buffer, sizeof(buffer) - 1, 0);
-    
-    if(rec > 0)
-    {
-        buffer[rec] = '\0';
-        printf("data received: %s\n", buffer);
-    }
-    else if(rec == 0)
-    {
-        printf("server closed connection\n");
-    }
-    else
-    {
-        printf("receiving failed\n");
-    }
-    
+
     close(sockfd);
+
+    printf("Client closed.\n");
 }
