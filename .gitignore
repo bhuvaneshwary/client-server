@@ -5,6 +5,7 @@ a.out
 
 # Object files
 *.o
+*.exe
 
 # macOS
 .DS_Store
